@@ -19,11 +19,11 @@ gh auth status
 Register this plugin's marketplace and install:
 
 ```bash
-/plugin marketplace add /home/ygkim/my-git-plugin
-/plugin install my-git-plugin@my-git-plugin
+/plugin marketplace add ./
+/plugin install claude-dev-skills@claude-dev-skills
 ```
 
-Open `/plugin` to confirm `my-git-plugin` is enabled.
+Open `/plugin` to confirm `claude-dev-skills` is enabled.
 
 ## Install (public GitHub repo)
 
@@ -31,13 +31,13 @@ Once published to GitHub, anyone can install it directly:
 
 ```bash
 /plugin marketplace add https://github.com/wheresmadog/claude-dev-skills
-/plugin install my-git-plugin@my-git-plugin
+/plugin install claude-dev-skills@claude-dev-skills
 ```
 
 ## Structure
 
 ```
-my-git-plugin/
+claude-dev-skills/
 ├── .claude-plugin/
 │   ├── plugin.json          # plugin manifest (name, version, author)
 │   └── marketplace.json     # local marketplace catalog

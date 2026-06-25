@@ -1,9 +1,9 @@
 {
-  "name": "my-git-plugin",
+  "name": "claude-dev-skills",
   "owner": { "name": "ygkim" },
   "plugins": [
     {
-      "name": "my-git-plugin",
+      "name": "claude-dev-skills",
       "source": "./",
       "description": "GitHub workflow skills (gh-conv-to-issue, gh-issue-to-plan, cc-module-md).",
       "version": "1.0.0",
