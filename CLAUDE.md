@@ -1,6 +1,6 @@
 # claude-dev-skills
 
-A Claude Code plugin that ships four workflow skills. Skills are plain markdown files — no compilation. One skill (`commit-draft`) has a companion hook script that requires `jq`.
+A Claude Code plugin that ships four workflow skills. Skills are plain markdown files — no compilation. `commit-draft` has a companion hook script, and `gh-issue-implement`/`update-claude-md` have a pair of hook scripts that force plan mode — all three require `jq`.
 
 ## Skills
 
@@ -21,12 +21,18 @@ Fetches a GitHub issue and implements it.
 
 Accepts a bare number (`42`) or a full URL as `$ARGUMENTS`.
 
+Key invariants:
+- A plugin `UserPromptExpansion` hook (`hooks/hooks.json` → `hooks/plan-mode-prompt.sh`) instructs the model to call `EnterPlanMode` before this skill's own explore/plan/execute steps run, since the skill otherwise designs and executes in one pass.
+
 ### update-claude-md (`/update-claude-md`)
 Generates a structured `CLAUDE.md` for the current module.
 
 Sections: Module Purpose, Feature Overview, Module Boundaries, Internal Architecture, Integration Points, Domain Model, Change Guide, Directory Guide, Mental Model.
 
 Focus: architectural understanding for onboarding engineers, not a file inventory.
+
+Key invariants:
+- Same `UserPromptExpansion` hook as `gh-issue-implement` forces plan mode when invoked via `/update-claude-md`. Unlike `gh-issue-implement`, this skill has no `disable-model-invocation` flag, so the model can also invoke it directly via the `Skill` tool mid-conversation — a `PreToolUse` hook (`hooks/plan-mode-guard.sh`) denies that call until plan mode is active, since `UserPromptExpansion` never fires for a `Skill` tool call.
 
 ### commit-draft (`/commit-draft`)
 Analyzes staged changes and drafts a commit, handling versioning and pre-commit reformatting.
@@ -50,6 +56,8 @@ skills/update-claude-md/SKILL.md
 skills/commit-draft/SKILL.md
 hooks/hooks.json                 # plugin-level hook registry, auto-discovered
 hooks/commit-draft-context.sh      # UserPromptExpansion hook for commit-draft (requires jq)
+hooks/plan-mode-prompt.sh          # UserPromptExpansion hook forcing plan mode for gh-issue-implement/update-claude-md
+hooks/plan-mode-guard.sh           # PreToolUse hook denying autonomous Skill-tool calls to those skills outside plan mode
 ```
 
 ## Adding a skill
@@ -75,3 +83,4 @@ Public: https://github.com/wheresmadog/claude-dev-skills
 - `disable-model-invocation: true` in gh-issue-implement's and commit-draft's front-matter means they run as a direct instruction set, not a sub-model call — keep the instructions self-contained and deterministic.
 - `.claude/settings.local.json` contains a local `ANTHROPIC_BASE_URL` override — do not commit this file to a public repo.
 - `hooks/commit-draft-context.sh` requires `jq`; it degrades to a no-op (exit 1, stderr note) if `jq` is missing, and the `commit-draft` skill falls back to gathering context itself in that case.
+- `hooks/plan-mode-prompt.sh` and `hooks/plan-mode-guard.sh` also require `jq`; each degrades to a no-op if `jq` is missing, meaning `gh-issue-implement`/`update-claude-md` simply run without the plan-mode gate rather than failing.
