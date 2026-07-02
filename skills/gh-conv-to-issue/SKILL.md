@@ -41,31 +41,7 @@ The final specification must contain no unresolved questions.
 
 ## Draft Specification
 
-Create a specification containing:
-
-### Summary / Goal
-
-### Background & Context
-
-### Requirements
-
-### Technical Approach
-
-### Edge Cases & Failure Modes
-
-### Security & Performance Considerations
-
-### Integration Points
-
-### Out of Scope
-
-### Manual Verification Steps
-
-Verification steps must be:
-
-- Observable
-- Deterministic
-- Unambiguous
+Fill in the template at `templates/issue.md` to produce the specification. Follow the guidance embedded in each section.
 
 ## Approval Loop
 
